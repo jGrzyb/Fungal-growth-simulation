@@ -37,7 +37,7 @@ class Fungus:
             self.fungus = 1
 
 
-class Hyphae():
+class Hyphae:
     def __init__(
             self,
             forward_probability=0.5,
@@ -239,10 +239,10 @@ class Grid:
 
     
 
+if __name__ == "__main__":
+    grid = Grid(50, [Hyphae(forward_probability=0.8, side_probability=0.1, direction=1)])
+    grid.run(50)
+    grid.generate_gifs(filename="1")
 
-grid = Grid(50, [Hyphae(forward_probability=0.8, side_probability=0.1, direction=1)])
-grid.run(50)
-grid.generate_gifs(filename="1")
-
-grid.run(50)
-grid.generate_gifs(filename="2")
+    grid.run(50)
+    grid.generate_gifs(filename="2")
