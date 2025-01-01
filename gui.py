@@ -15,12 +15,12 @@ def run_simulation():
        
         hyphaes = []
         for hyphae_frame in hyphae_frames:
-            fp = float(hyphae_frame['fp_var'].get())
-            sp = float(hyphae_frame['sp_var'].get())
-            greed = float(hyphae_frame['greed_var'].get())
-            mpl = float(hyphae_frame['mpl_var'].get())
-            cc = float(hyphae_frame['cc_var'].get())
-            direction = int(hyphae_frame['direction_var'].get())
+            fp = float(hyphae_frame.vars['fp_var'].get())
+            sp = float(hyphae_frame.vars['sp_var'].get())
+            greed = float(hyphae_frame.vars['greed_var'].get())
+            mpl = float(hyphae_frame.vars['mpl_var'].get())
+            cc = float(hyphae_frame.vars['cc_var'].get())
+            direction = int(hyphae_frame.vars['direction_var'].get())
             hyphaes.append(Hyphae(forward_probability=fp, side_probability=sp, greed=greed,
                                   move_probab_lower=mpl, creation_cost=cc, direction=direction))
 
@@ -65,10 +65,17 @@ def add_hyphae():
         'fp_var': fp_var, 'sp_var': sp_var, 'greed_var': greed_var, 
         'mpl_var': mpl_var, 'cc_var': cc_var, 'direction_var': direction_var
     }
+    print(frame.vars)
     hyphae_frames.append(frame)
+
+
+def on_closing():
+    root.destroy()
+
 
 root = tk.Tk()
 root.title("Fungal Growth Simulation GUI")
+root.protocol("WM_DELETE_WINDOW", on_closing)
 
 size_var = tk.StringVar(value='100')
 
