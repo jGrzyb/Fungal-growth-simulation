@@ -12,96 +12,78 @@ from simulation import Grid, Hyphae
 def run_simulation():
     try:
         size = int(size_var.get())
-        num_hyphae = int(hyphae_count_var.get())
-        forward_prob = float(forward_prob_var.get())
-        side_prob = float(side_prob_var.get())
-        greed = float(greed_var.get())
-        move_prob_lower = float(move_prob_lower_var.get())
-        creation_cost = float(creation_cost_var.get())
-        
-        
-        hyphaes = [Hyphae(forward_probability=forward_prob, side_probability=side_prob,
-                          greed=greed, move_probab_lower=move_prob_lower,
-                          creation_cost=creation_cost) for _ in range(num_hyphae)]
-        
-        
+       
+        hyphaes = []
+        for hyphae_frame in hyphae_frames:
+            fp = float(hyphae_frame['fp_var'].get())
+            sp = float(hyphae_frame['sp_var'].get())
+            greed = float(hyphae_frame['greed_var'].get())
+            mpl = float(hyphae_frame['mpl_var'].get())
+            cc = float(hyphae_frame['cc_var'].get())
+            direction = int(hyphae_frame['direction_var'].get())
+            hyphaes.append(Hyphae(forward_probability=fp, side_probability=sp, greed=greed,
+                                  move_probab_lower=mpl, creation_cost=cc, direction=direction))
+
         grid = Grid(size=size, hyphaes=hyphaes)
-        grid.run(50)  
-        grid.generate_gifs(filename="simulation_output") 
-        
-        
-        with open("fungus_simulation_output.gif", 'rb') as f:
-            image_bytes = f.read()
-            data_stream = BytesIO(image_bytes)
-            pil_image = Image.open(data_stream)
-            tk_image = ImageTk.PhotoImage(pil_image)
-            display_label.config(image=tk_image)
-            display_label.image = tk_image 
+        grid.run(50)  # You can make the number of steps a GUI parameter too
+        grid.generate_gifs(filename="simulation_output")
+
+        # Display the first GIF
+        display_gif("fungus_simulation_output.gif")
         
     except Exception as e:
         messagebox.showerror("Simulation Error", str(e))
 
-def save_configuration():
-    file_path = filedialog.asksaveasfilename(defaultextension=".txt")
-    if file_path:
-        with open(file_path, 'w') as file:
-            data = f"{size_var.get()},{hyphae_count_var.get()},{forward_prob_var.get()},{side_prob_var.get()},"
-            data += f"{greed_var.get()},{move_prob_lower_var.get()},{creation_cost_var.get()}"
-            file.write(data)
+def display_gif(path):
+    img = Image.open(path)
+    frame = ImageTk.PhotoImage(img)
+    display_label.config(image=frame)
+    display_label.image = frame  # Keep a reference
 
-def load_configuration():
-    file_path = filedialog.askopenfilename(filetypes=[("Text files", "*.txt")])
-    if file_path:
-        with open(file_path, 'r') as file:
-            params = file.read().split(',')
-            size_var.set(params[0])
-            hyphae_count_var.set(params[1])
-            forward_prob_var.set(params[2])
-            side_prob_var.set(params[3])
-            greed_var.set(params[4])
-            move_prob_lower_var.set(params[5])
-            creation_cost_var.set(params[6])
+def add_hyphae():
+    # Frame for one hyphae's settings
+    frame = tk.Frame(root)
+    frame.pack()
+
+   
+    fp_var = tk.StringVar(value='0.5')
+    sp_var = tk.StringVar(value='0.25')
+    greed_var = tk.StringVar(value='0.01')
+    mpl_var = tk.StringVar(value='0.8')
+    cc_var = tk.StringVar(value='0.01')
+    direction_var = tk.StringVar(value='0')
+
+   
+    labels = ['Forward Prob.', 'Side Prob.', 'Greed', 'Move Prob Lower', 'Creation Cost', 'Direction']
+    vars = [fp_var, sp_var, greed_var, mpl_var, cc_var, direction_var]
+    for label, var in zip(labels, vars):
+        tk.Label(frame, text=label).pack(side='left')
+        tk.Entry(frame, textvariable=var).pack(side='left')
+    
+   
+    frame.vars = {
+        'fp_var': fp_var, 'sp_var': sp_var, 'greed_var': greed_var, 
+        'mpl_var': mpl_var, 'cc_var': cc_var, 'direction_var': direction_var
+    }
+    hyphae_frames.append(frame)
 
 root = tk.Tk()
 root.title("Fungal Growth Simulation GUI")
 
-# Entry variables
 size_var = tk.StringVar(value='100')
-hyphae_count_var = tk.StringVar(value='1')
-forward_prob_var = tk.StringVar(value='0.5')
-side_prob_var = tk.StringVar(value='0.25')
-greed_var = tk.StringVar(value='0.01')
-move_prob_lower_var = tk.StringVar(value='0.8')
-creation_cost_var = tk.StringVar(value='0.01')
 
+hyphae_frames = []
 
-entries = [
-    ("Grid Size", size_var),
-    ("Number of Hyphae", hyphae_count_var),
-    ("Forward Probability", forward_prob_var),
-    ("Side Probability", side_prob_var),
-    ("Greed", greed_var),
-    ("Move Probability Lower Bound", move_prob_lower_var),
-    ("Creation Cost", creation_cost_var)
-]
+tk.Label(root, text="Grid Size").pack()
+tk.Entry(root, textvariable=size_var).pack()
 
-for label, var in entries:
-    tk.Label(root, text=label).pack()
-    entry = tk.Entry(root, textvariable=var)
-    entry.pack()
+tk.Button(root, text="Add Hyphae", command=add_hyphae).pack()
 
-# Buttons
-run_button = tk.Button(root, text="Run Simulation", command=run_simulation)
-run_button.pack()
-save_button = tk.Button(root, text="Save Configuration", command=save_configuration)
-save_button.pack()
-load_button = tk.Button(root, text="Load Configuration", command=load_configuration)
-load_button.pack()
+tk.Button(root, text="Run Simulation", command=run_simulation).pack()
 
-
+# Label for displaying the GIF
 display_label = tk.Label(root)
 display_label.pack()
 
 root.mainloop()
-
 
