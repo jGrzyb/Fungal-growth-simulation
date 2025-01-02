@@ -128,4 +128,6 @@ fungus_label.pack(side='left')
 substrate_label = tk.Label(image_frame)
 substrate_label.pack(side='left')
 
+add_hyphae()
+
 root.mainloop()
