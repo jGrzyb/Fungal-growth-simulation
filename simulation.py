@@ -238,8 +238,16 @@ class Grid:
     def generate_gifs(self, interval=50, gap=1, filename=""):
         self.animate(self.fungus_images[::gap], interval, f"{filename}_fungus")
         self.animate(self.substrate_images[::gap], interval, f"{filename}_substrate")
-        plt.imsave(f"{filename}_fungus_last_frame.png", self.fungus_images[-1], vmin=0, vmax=1, cmap='viridis')
-        plt.imsave(f"{filename}_substrate_last_frame.png", self.substrate_images[-1], vmin=0, vmax=1, cmap='viridis')
+        
+        fig, ax = plt.subplots()
+        cbar = fig.colorbar(ax.imshow(self.fungus_images[-1], cmap='viridis'))
+        cbar.set_label('10^-5 mol')
+        fig.savefig(f"{filename}_fungus_last_frame.png")
+        
+        fig, ax = plt.subplots()
+        cbar = fig.colorbar(ax.imshow(self.substrate_images[-1], cmap='viridis'))
+        cbar.set_label('10^-5 mol')
+        fig.savefig(f"{filename}_substrate_last_frame.png")
 
         
 
