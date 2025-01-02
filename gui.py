@@ -33,8 +33,8 @@ def run_simulation():
         grid.run(step_count)  
         grid.generate_gifs(interval=50, gap=1, filename=filepath)
 
-        display_gif(f"fungus_{filepath}.gif", fungus_label)
-        display_gif(f"substrate_{filepath}.gif", substrate_label)
+        display_gif(f"{filepath}_fungus.gif", fungus_label)
+        display_gif(f"{filepath}_substrate.gif", substrate_label)
         
     except Exception as e:
         messagebox.showerror("Simulation Error", str(e))
@@ -69,7 +69,7 @@ def add_hyphae():
     cc_var = tk.StringVar(value='0.01')
     direction_var = tk.StringVar(value='0')
 
-    labels = ['Forward Prob.', 'Side Prob.', 'Greed', 'Move Prob Lower', 'Creation Cost', 'Direction']
+    labels = ['Forward Prob.', 'Side Prob.', 'Substrate consumption', 'Move Prob Lower', 'Creation Cost', 'Direction']
     vars = [fp_var, sp_var, greed_var, mpl_var, cc_var, direction_var]
     for label, var in zip(labels, vars):
         tk.Label(frame, text=label).pack(side='left')
@@ -98,13 +98,13 @@ hyphae_frames = []
 
 tk.Label(root, text="Grid Size").pack()
 tk.Entry(root, textvariable=size_var).pack()
-tk.Label(root, text="Substrate Mean").pack()
+tk.Label(root, text="Avarage substrate amount").pack()
 tk.Entry(root, textvariable=substrate_mean_var).pack()
-tk.Label(root, text="Translocation Cost").pack()
+tk.Label(root, text="Substrate transport cost").pack()
 tk.Entry(root, textvariable=translocation_cost_var).pack()
-tk.Label(root, text="Step Count").pack()
+tk.Label(root, text="Number of steps").pack()
 tk.Entry(root, textvariable=step_count_var).pack()
-tk.Label(root, text="Filepath for GIF").pack()
+tk.Label(root, text="Name of simulation").pack()
 tk.Entry(root, textvariable=filepath_var).pack()
 
 tk.Button(root, text="Add Hyphae", command=add_hyphae).pack()

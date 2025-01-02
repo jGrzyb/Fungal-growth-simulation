@@ -231,8 +231,8 @@ class Grid:
         ani.save(f'{fileName}.gif', writer='imagemagick')
 
     def generate_gifs(self, interval=50, gap=1, filename=""):
-        self.animate(self.fungus_images[::gap], interval, f"fungus_{filename}")
-        self.animate(self.substrate_images[::gap], interval, f"substrate_{filename}")
+        self.animate(self.fungus_images[::gap], interval, f"{filename}_fungus")
+        self.animate(self.substrate_images[::gap], interval, f"{filename}_substrate")
 
         
 
