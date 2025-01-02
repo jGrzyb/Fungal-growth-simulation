@@ -33,29 +33,30 @@ def run_simulation():
         grid.run(step_count)  
         grid.generate_gifs(interval=50, gap=1, filename=filepath)
 
-        display_gif(f"{filepath}.gif")
+        display_gif(f"fungus_{filepath}.gif", fungus_label)
+        display_gif(f"substrate_{filepath}.gif", substrate_label)
         
     except Exception as e:
         messagebox.showerror("Simulation Error", str(e))
 
-def display_gif(path):
+def display_gif(path, label):
     img = Image.open(path)
     img.seek(0)  # Rewind to the first frame
     frame = ImageTk.PhotoImage(img)
-    display_label.config(image=frame)
-    display_label.image = frame  # Keep a reference
-    animate_gif(img)
+    label.config(image=frame)
+    label.image = frame  # Keep a reference
+    animate_gif(img, label)
 
-def animate_gif(img, frame=0):
+def animate_gif(img, label, frame=0):
     try:
         img.seek(frame)
         next_frame = ImageTk.PhotoImage(img)
-        display_label.config(image=next_frame)
-        display_label.image = next_frame
+        label.config(image=next_frame)
+        label.image = next_frame
         frame += 1
-        root.after(100, animate_gif, img, frame)
+        root.after(50, animate_gif, img, label, frame)
     except EOFError:
-        animate_gif(img, 0)  # Repeat the animation
+        animate_gif(img, label, 0)  # Repeat the animation
 
 def add_hyphae():
     frame = tk.Frame(root)
@@ -109,9 +110,15 @@ tk.Entry(root, textvariable=filepath_var).pack()
 tk.Button(root, text="Add Hyphae", command=add_hyphae).pack()
 tk.Button(root, text="Run Simulation", command=run_simulation).pack()
 
-display_label = tk.Label(root)
-display_label.pack()
+# Create a frame to hold the two labels
+image_frame = tk.Frame(root)
+image_frame.pack()
+
+# Create two labels for displaying the images
+fungus_label = tk.Label(image_frame)
+fungus_label.pack(side='left')
+
+substrate_label = tk.Label(image_frame)
+substrate_label.pack(side='left')
 
 root.mainloop()
-
-
