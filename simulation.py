@@ -233,11 +233,7 @@ class Grid:
             ims.append([im])
         ani = animation.ArtistAnimation(fig, ims, interval=interval, blit=True, repeat_delay=1000, repeat=True)
 
-        try:
-            os.remove(f'{fileName}.gif')
-            ani.save(f'{fileName}.gif', writer='imagemagick')
-        except FileNotFoundError:
-            print(f'No such file: {fileName}.gif')
+        ani.save(f'{fileName}.gif', writer='imagemagick')
 
     def generate_gifs(self, interval=50, gap=1, filename=""):
         self.animate(self.fungus_images[::gap], interval, f"{filename}_fungus")
