@@ -87,6 +87,13 @@ def add_hyphae():
     }
     hyphae_frames.append(frame)
 
+
+def remove_hyphae():
+    for var in hyphae_frames[-1].winfo_children():
+        var.destroy()
+    hyphae_frames[-1].destroy()
+    hyphae_frames.pop()
+
 def on_closing():
     root.destroy()
 
@@ -126,7 +133,7 @@ hyphae_frame = tk.Frame(main_frame)
 hyphae_frame.pack()
 
 tk.Button(main_frame, text="Add Hyphae", command=add_hyphae).pack()
-
+tk.Button(main_frame, text="Remove Hyphae", command=remove_hyphae).pack()
 # Run simulation button
 tk.Button(main_frame, text="Run Simulation", command=run_simulation).pack()
 
