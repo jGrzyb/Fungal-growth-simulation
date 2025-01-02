@@ -9,10 +9,15 @@ from io import BytesIO
 from fractal_noise import get_fractal_noise
 from simulation import Grid, Hyphae  
 
+
 def run_simulation():
     try:
         size = int(size_var.get())
-       
+        substrate_mean = float(substrate_mean_var.get())
+        translocation_cost = float(translocation_cost_var.get())
+        step_count = int(step_count_var.get())
+        filepath = filepath_var.get()
+
         hyphaes = []
         for hyphae_frame in hyphae_frames:
             fp = float(hyphae_frame.vars['fp_var'].get())
@@ -24,28 +29,38 @@ def run_simulation():
             hyphaes.append(Hyphae(forward_probability=fp, side_probability=sp, greed=greed,
                                   move_probab_lower=mpl, creation_cost=cc, direction=direction))
 
-        grid = Grid(size=size, hyphaes=hyphaes)
-        grid.run(50)  # You can make the number of steps a GUI parameter too
-        grid.generate_gifs(filename="simulation_output")
+        grid = Grid(size=size, hyphaes=hyphaes, substrate_mean=substrate_mean, translocation_cost=translocation_cost)
+        grid.run(step_count)  
+        grid.generate_gifs(interval=50, gap=1, filename=filepath)
 
-        # Display the first GIF
-        display_gif("fungus_simulation_output.gif")
+        display_gif(f"{filepath}.gif")
         
     except Exception as e:
         messagebox.showerror("Simulation Error", str(e))
 
 def display_gif(path):
     img = Image.open(path)
+    img.seek(0)  # Rewind to the first frame
     frame = ImageTk.PhotoImage(img)
     display_label.config(image=frame)
     display_label.image = frame  # Keep a reference
+    animate_gif(img)
+
+def animate_gif(img, frame=0):
+    try:
+        img.seek(frame)
+        next_frame = ImageTk.PhotoImage(img)
+        display_label.config(image=next_frame)
+        display_label.image = next_frame
+        frame += 1
+        root.after(100, animate_gif, img, frame)
+    except EOFError:
+        animate_gif(img, 0)  # Repeat the animation
 
 def add_hyphae():
-    # Frame for one hyphae's settings
     frame = tk.Frame(root)
     frame.pack()
 
-   
     fp_var = tk.StringVar(value='0.5')
     sp_var = tk.StringVar(value='0.25')
     greed_var = tk.StringVar(value='0.01')
@@ -53,44 +68,50 @@ def add_hyphae():
     cc_var = tk.StringVar(value='0.01')
     direction_var = tk.StringVar(value='0')
 
-   
     labels = ['Forward Prob.', 'Side Prob.', 'Greed', 'Move Prob Lower', 'Creation Cost', 'Direction']
     vars = [fp_var, sp_var, greed_var, mpl_var, cc_var, direction_var]
     for label, var in zip(labels, vars):
         tk.Label(frame, text=label).pack(side='left')
         tk.Entry(frame, textvariable=var).pack(side='left')
     
-   
     frame.vars = {
         'fp_var': fp_var, 'sp_var': sp_var, 'greed_var': greed_var, 
         'mpl_var': mpl_var, 'cc_var': cc_var, 'direction_var': direction_var
     }
-    print(frame.vars)
     hyphae_frames.append(frame)
-
 
 def on_closing():
     root.destroy()
-
 
 root = tk.Tk()
 root.title("Fungal Growth Simulation GUI")
 root.protocol("WM_DELETE_WINDOW", on_closing)
 
 size_var = tk.StringVar(value='100')
+substrate_mean_var = tk.StringVar(value='0.5')
+translocation_cost_var = tk.StringVar(value='0.01')
+step_count_var = tk.StringVar(value='50')
+filepath_var = tk.StringVar(value='simulation_output')
 
 hyphae_frames = []
 
 tk.Label(root, text="Grid Size").pack()
 tk.Entry(root, textvariable=size_var).pack()
+tk.Label(root, text="Substrate Mean").pack()
+tk.Entry(root, textvariable=substrate_mean_var).pack()
+tk.Label(root, text="Translocation Cost").pack()
+tk.Entry(root, textvariable=translocation_cost_var).pack()
+tk.Label(root, text="Step Count").pack()
+tk.Entry(root, textvariable=step_count_var).pack()
+tk.Label(root, text="Filepath for GIF").pack()
+tk.Entry(root, textvariable=filepath_var).pack()
 
 tk.Button(root, text="Add Hyphae", command=add_hyphae).pack()
-
 tk.Button(root, text="Run Simulation", command=run_simulation).pack()
 
-# Label for displaying the GIF
 display_label = tk.Label(root)
 display_label.pack()
 
 root.mainloop()
+
 
