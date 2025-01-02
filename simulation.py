@@ -134,6 +134,8 @@ class Grid:
 
         noise = get_fractal_noise(size, size, 0.5, [1, 1, 10])
         noise = normalize(noise, np.min(noise), np.max(noise), 0, 1)
+        noise = noise ** 1.5
+        # noise = normalize(noise, np.min(noise), np.max(noise), 0, 1)
         print(np.mean(noise))
         noise *= substrate_mean / (np.mean(noise))
         print(np.mean(noise))
@@ -196,8 +198,6 @@ class Grid:
                     new_grid[i, j+1].content.fungus += diff
 
     def run(self, steps=20):
-        print("[" + (" " * min(steps, 100)) + "]")
-        print("[", end="")
         self.fungus_images.append(self.fungus_to_image())
         self.substrate_images.append(self.substrate_to_image())
 
@@ -219,7 +219,7 @@ class Grid:
             self.grid = new_grid
             self.fungus_images.append(self.fungus_to_image())
             self.substrate_images.append(self.substrate_to_image())
-        print("]")
+            print(f'step: {s}')
 
     def animate(self, images, interval ,fileName):
         fig, ax = plt.subplots()

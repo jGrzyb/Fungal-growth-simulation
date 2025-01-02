@@ -75,7 +75,7 @@ def add_hyphae():
     cc_var = tk.StringVar(value='0.01')
     direction_var = tk.StringVar(value='0')
 
-    labels = ['Forward Prob.', 'Side Prob.', 'Substrate consumption', 'Move Prob Lower', 'Creation Cost', 'Direction']
+    labels = ['Forward Prob.', 'Side Prob.', 'Substrate consumption (10^-5 mol)', 'Move Prob Lower', 'Creation Cost (10^-5 mol)', 'Direction']
     vars = [fp_var, sp_var, greed_var, mpl_var, cc_var, direction_var]
     for label, var in zip(labels, vars):
         tk.Label(frame, text=label).pack(side='left')
@@ -110,11 +110,11 @@ main_frame.pack()
 params_frame = tk.Frame(main_frame)
 params_frame.pack()
 
-tk.Label(params_frame, text="Grid Size").pack()
+tk.Label(params_frame, text="Grid Size (10^-5 m)").pack()
 tk.Entry(params_frame, textvariable=size_var).pack()
-tk.Label(params_frame, text="Avarage substrate amount").pack()
+tk.Label(params_frame, text="Avarage substrate amount (10^-5 mol/cm^2)").pack()
 tk.Entry(params_frame, textvariable=substrate_mean_var).pack()
-tk.Label(params_frame, text="Substrate transport cost").pack()
+tk.Label(params_frame, text="Substrate transport cost (10^-5 mol)").pack()
 tk.Entry(params_frame, textvariable=translocation_cost_var).pack()
 tk.Label(params_frame, text="Number of steps").pack()
 tk.Entry(params_frame, textvariable=step_count_var).pack()
