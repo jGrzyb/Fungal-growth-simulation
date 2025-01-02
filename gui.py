@@ -3,8 +3,12 @@ from tkinter import messagebox
 from PIL import Image, ImageTk
 from simulation import Grid, Hyphae
 
+animation_after_ids = []
+
 def run_simulation():
     try:
+        cancel_animation()  # Stop any ongoing animations
+
         size = int(size_var.get())
         substrate_mean = float(substrate_mean_var.get())
         translocation_cost = float(translocation_cost_var.get())
@@ -23,12 +27,12 @@ def run_simulation():
                                   move_probab_lower=mpl, creation_cost=cc, direction=direction))
 
         grid = Grid(size=size, hyphaes=hyphaes, substrate_mean=substrate_mean, translocation_cost=translocation_cost)
-        grid.run(step_count)  
+        grid.run(step_count)
         grid.generate_gifs(interval=50, gap=1, filename=filepath)
 
         display_gif(f"{filepath}_fungus.gif", fungus_label)
         display_gif(f"{filepath}_substrate.gif", substrate_label)
-        
+
     except Exception as e:
         messagebox.showerror("Simulation Error", str(e))
 
@@ -40,6 +44,14 @@ def display_gif(path, label):
     label.image = frame  # Keep a reference
     animate_gif(img, label)
 
+def cancel_animation():
+    """Cancel any ongoing GIF animations."""
+    global animation_after_ids
+    for after_id in animation_after_ids:
+        root.after_cancel(after_id)
+    animation_after_ids = []  # Clear the list of tracked IDs
+
+
 def animate_gif(img, label, frame=0):
     try:
         img.seek(frame)
@@ -47,7 +59,8 @@ def animate_gif(img, label, frame=0):
         label.config(image=next_frame)
         label.image = next_frame
         frame += 1
-        root.after(50, animate_gif, img, label, frame)
+        after_id = root.after(50, animate_gif, img, label, frame)
+        animation_after_ids.append(after_id)
     except EOFError:
         animate_gif(img, label, 0)  # Repeat the animation
 

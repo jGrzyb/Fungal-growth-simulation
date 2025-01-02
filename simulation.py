@@ -1,3 +1,5 @@
+import os
+
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
@@ -228,6 +230,7 @@ class Grid:
             im = ax.imshow(image, animated=True, vmin=0, vmax=max_value)
             ims.append([im])
         ani = animation.ArtistAnimation(fig, ims, interval=interval, blit=True, repeat_delay=1000, repeat=True)
+        os.remove(f'{fileName}.gif')
         ani.save(f'{fileName}.gif', writer='imagemagick')
 
     def generate_gifs(self, interval=50, gap=1, filename=""):
