@@ -223,7 +223,8 @@ class Grid:
 
     def animate(self, images, interval ,fileName):
         fig, ax = plt.subplots()
-        fig.colorbar(ax.imshow(images[0], animated=True, cmap='viridis'))
+        cbar = fig.colorbar(ax.imshow(images[0], animated=True, cmap='viridis'))
+        cbar.set_label('10^-5 mol')
         ims = []
         max_value = max([np.max(image) for image in images])
         min_value = min([np.min(image) for image in images])
