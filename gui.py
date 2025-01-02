@@ -1,14 +1,7 @@
 import tkinter as tk
-from tkinter import filedialog, messagebox
-import numpy as np
-import matplotlib.pyplot as plt
-import matplotlib.animation as animation
-import copy
+from tkinter import messagebox
 from PIL import Image, ImageTk
-from io import BytesIO
-from fractal_noise import get_fractal_noise
-from simulation import Grid, Hyphae  
-
+from simulation import Grid, Hyphae
 
 def run_simulation():
     try:
@@ -59,7 +52,7 @@ def animate_gif(img, label, frame=0):
         animate_gif(img, label, 0)  # Repeat the animation
 
 def add_hyphae():
-    frame = tk.Frame(root)
+    frame = tk.Frame(hyphae_frame)
     frame.pack()
 
     fp_var = tk.StringVar(value='0.5')
@@ -96,22 +89,36 @@ filepath_var = tk.StringVar(value='simulation_output')
 
 hyphae_frames = []
 
-tk.Label(root, text="Grid Size").pack()
-tk.Entry(root, textvariable=size_var).pack()
-tk.Label(root, text="Avarage substrate amount").pack()
-tk.Entry(root, textvariable=substrate_mean_var).pack()
-tk.Label(root, text="Substrate transport cost").pack()
-tk.Entry(root, textvariable=translocation_cost_var).pack()
-tk.Label(root, text="Number of steps").pack()
-tk.Entry(root, textvariable=step_count_var).pack()
-tk.Label(root, text="Name of simulation").pack()
-tk.Entry(root, textvariable=filepath_var).pack()
+# Main frame
+main_frame = tk.Frame(root)
+main_frame.pack()
 
-tk.Button(root, text="Add Hyphae", command=add_hyphae).pack()
-tk.Button(root, text="Run Simulation", command=run_simulation).pack()
+# Parameters frame
+params_frame = tk.Frame(main_frame)
+params_frame.pack()
+
+tk.Label(params_frame, text="Grid Size").pack()
+tk.Entry(params_frame, textvariable=size_var).pack()
+tk.Label(params_frame, text="Avarage substrate amount").pack()
+tk.Entry(params_frame, textvariable=substrate_mean_var).pack()
+tk.Label(params_frame, text="Substrate transport cost").pack()
+tk.Entry(params_frame, textvariable=translocation_cost_var).pack()
+tk.Label(params_frame, text="Number of steps").pack()
+tk.Entry(params_frame, textvariable=step_count_var).pack()
+tk.Label(params_frame, text="Name of simulation").pack()
+tk.Entry(params_frame, textvariable=filepath_var).pack()
+
+# Hyphae frame
+hyphae_frame = tk.Frame(main_frame)
+hyphae_frame.pack()
+
+tk.Button(main_frame, text="Add Hyphae", command=add_hyphae).pack()
+
+# Run simulation button
+tk.Button(main_frame, text="Run Simulation", command=run_simulation).pack()
 
 # Create a frame to hold the two labels
-image_frame = tk.Frame(root)
+image_frame = tk.Frame(main_frame)
 image_frame.pack()
 
 # Create two labels for displaying the images
